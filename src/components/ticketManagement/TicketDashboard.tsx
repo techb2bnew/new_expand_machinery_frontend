@@ -77,7 +77,7 @@ export default function TicketDashboard() {
         setCategories(categoriesData);
         setAgents(agentsData.data.map(agent => ({
           _id: agent._id,
-          name: agent.firstName + ' ' + agent.lastName,
+          name: agent.name,
           email: agent.email
         })));
         setCustomers(customersData.customers.map((customer: ApiCustomer & { id?: string }) => ({

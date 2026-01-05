@@ -2,8 +2,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface Agent {
   _id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   phone?: string;
   role: string;
@@ -36,8 +35,7 @@ export interface ExportResponse {
 }
 
 export interface CreateAgentData {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   phone?: string;
   status?: 'online' | 'offline';

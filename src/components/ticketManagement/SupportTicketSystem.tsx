@@ -199,7 +199,7 @@ export default function SupportTicketSystem() {
   const getAgentName = (agentId: string) => {
     if (agentId === 'unassigned') return 'Unassigned';
     const agent = agents.find(a => a._id === agentId);
-    return agent ? `${agent.firstName} ${agent.lastName}`.trim() : 'Unknown Agent';
+    return agent ? agent.name : 'Unknown Agent';
   };
 
   const formatDateTime = (value?: string) => {
@@ -399,7 +399,7 @@ export default function SupportTicketSystem() {
                     <option value="unassigned">Unassigned</option>
                     {agents.map((agent) => (
                       <option key={agent._id} value={agent._id}>
-                        {`${agent.firstName} ${agent.lastName}`.trim()}
+                        {agent.name}
                       </option>
                     ))}
                   </select>

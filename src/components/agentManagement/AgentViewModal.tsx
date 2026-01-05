@@ -35,21 +35,15 @@ export default function AgentViewModal({ isOpen, onClose, agent }: AgentViewModa
                     {/* Header */}
                     <div className="mb-6">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Agent Details</h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Information for {agent.firstName} {agent.lastName}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Information for {agent.name}</p>
                     </div>
 
                     {/* Agent Details */}
                     <div className="space-y-4">
-                        {/* First Name and Last Name */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">First Name</p>
-                                <p className="text-gray-900 dark:text-white font-medium">{agent.firstName}</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Last Name</p>
-                                <p className="text-gray-900 dark:text-white font-medium">{agent.lastName}</p>
-                            </div>
+                        {/* Full Name */}
+                        <div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Full Name</p>
+                            <p className="text-gray-900 dark:text-white font-medium">{agent.name}</p>
                         </div>
 
                         {/* Email Address */}

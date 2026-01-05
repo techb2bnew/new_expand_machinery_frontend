@@ -249,18 +249,27 @@ export default function AgentManagement() {
             const response = await agentService.fetchAgents(page, limit, searchQuery);
             if (response && response.data) {
                 // Map API data to match frontend format
-                const mappedAgents: DisplayAgent[] = response.data.map((agent: Agent, index: number) => ({
-                    ...agent,
-                    id: agent._id,
-                    name: `${agent.firstName} ${agent.lastName}`,
-                    initials: `${agent.firstName[0]}${agent.lastName[0]}`,
-                    color: index % 2 === 0 ? 'bg-cyan-400' : 'bg-teal-400',
-                    phone: agent.phone || 'N/A',
-                    role: `#agent${index + 1}`,
-                    categoryIds: agent.categoryIds || [],
-                    status: agent.status || 'offline',
-                    isActive: agent.isActive ?? true,
-                }));
+                const mappedAgents: DisplayAgent[] = response.data.map((agent: Agent, index: number) => {
+                    // Get initials from name (first letter of first word and first letter of last word)
+                    const nameParts = agent.name.trim().split(/\s+/);
+                    const initials = nameParts.length >= 2 
+                        ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase()
+                        : nameParts[0] ? nameParts[0][0].toUpperCase() : 'A';
+                    
+                    return {
+                        ...agent,
+                        id: agent._id,
+                        name: agent.name,
+                        initials,
+                        color: index % 2 === 0 ? 'bg-cyan-400' : 'bg-teal-400',
+                        phone: agent.phone || 'N/A',
+                        role: `#agent${index + 1}`,
+                        categoryIds: agent.categoryIds || [],
+                        status: agent.status || 'offline',
+                        isActive: agent.isActive ?? true,
+                        createdAt: agent.createdAt || new Date().toISOString()
+                    };
+                });
                 setAgents(mappedAgents);
                 setTotalPages(response.pagination.totalPages);
                 setTotalAgents(response.pagination.totalAgents);
@@ -339,21 +348,27 @@ export default function AgentManagement() {
         try {
             const newAgent = await agentService.createAgent(formData);
             // Add new agent to list
+            // Get initials from name
+            const nameParts = newAgent.name.trim().split(/\s+/);
+            const initials = nameParts.length >= 2 
+                ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase()
+                : nameParts[0] ? nameParts[0][0].toUpperCase() : 'A';
+            
             const mappedAgent: DisplayAgent = {
                 ...newAgent,
                 id: newAgent._id,
-                name: `${newAgent.firstName} ${newAgent.lastName}`,
+                name: newAgent.name,
                 phone: newAgent.phone || 'N/A',
                 role: `#agent${agents.length + 1}`,
                 status: newAgent.status || 'offline',
-                initials: `${newAgent.firstName[0]}${newAgent.lastName[0]}`,
+                initials,
                 color: 'bg-cyan-400',
                 categoryIds: newAgent.categoryIds || [],
                 createdAt: newAgent.createdAt || new Date().toISOString()
             };
             setAgents([...agents, mappedAgent]);
             setIsModalOpen(false);
-            toast.success(`Agent ${newAgent.firstName} ${newAgent.lastName} created successfully!`);
+            toast.success(`Agent ${newAgent.name} created successfully!`);
         } catch (err: unknown) {
             const errorMessage = (err as Error).message || 'Failed to create agent';
             toast.error(errorMessage);
@@ -369,7 +384,7 @@ export default function AgentManagement() {
             fetchAgents();
             setIsEditModalOpen(false);
             setEditingAgent(null);
-            toast.success(`Agent ${formData.firstName} ${formData.lastName} updated successfully!`);
+            toast.success(`Agent ${formData.name} updated successfully!`);
         } catch (err: unknown) {
             const errorMessage = (err as Error).message || 'Failed to update agent';
             toast.error(errorMessage);

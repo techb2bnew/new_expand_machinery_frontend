@@ -13,8 +13,7 @@ interface AgentModalProps {
 }
 
 export interface AgentFormData {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   phone: string;
   password?: string;
@@ -25,8 +24,7 @@ export interface AgentFormData {
 export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isEdit = false }: AgentModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [firstNameError, setFirstNameError] = useState<string>('');
-  const [lastNameError, setLastNameError] = useState<string>('');
+  const [nameError, setNameError] = useState<string>('');
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
   const [phoneError, setPhoneError] = useState<string>('');
@@ -36,8 +34,7 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState<AgentFormData>(initialData || {
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     phone: '',
     password: '',
@@ -126,23 +123,13 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
     }));
   };
 
-  // First Name validation
-  const validateFirstName = (firstName: string) => {
-    if (!firstName.trim()) {
-      setFirstNameError('First name is required');
+  // Full Name validation
+  const validateName = (name: string) => {
+    if (!name.trim()) {
+      setNameError('Full name is required');
       return false;
     }
-    setFirstNameError('');
-    return true;
-  };
-
-  // Last Name validation
-  const validateLastName = (lastName: string) => {
-    if (!lastName.trim()) {
-      setLastNameError('Last name is required');
-      return false;
-    }
-    setLastNameError('');
+    setNameError('');
     return true;
   };
 
@@ -206,15 +193,14 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
     e.preventDefault();
 
     // Validate all fields and show errors immediately
-    const isFirstNameValid = validateFirstName(formData.firstName);
-    const isLastNameValid = validateLastName(formData.lastName);
+    const isNameValid = validateName(formData.name);
     const isEmailValid = validateEmail(formData.email);
     const isPasswordValid = validatePassword(formData.password || '');
     const isPhoneValid = validatePhone(formData.phone);
     const isDepartmentValid = validateDepartment(formData.categoryId || []);
 
     // If any validation fails, show errors and return
-    if (!isFirstNameValid || !isLastNameValid || !isEmailValid || !isPasswordValid || !isPhoneValid || !isDepartmentValid) {
+    if (!isNameValid || !isEmailValid || !isPasswordValid || !isPhoneValid || !isDepartmentValid) {
       return;
     }
 
@@ -225,15 +211,13 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
       await onSubmit(formData);
       // Reset form
       setFormData({
-        firstName: '',
-        lastName: '',
+        name: '',
         email: '',
         phone: '',
         password: '',
         categoryId: [],
       });
-      setFirstNameError('');
-      setLastNameError('');
+      setNameError('');
       setEmailError('');
       setPasswordError('');
       setPhoneError('');
@@ -248,16 +232,14 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
 
   const handleClose = () => {
     setFormData({
-      firstName: '',
-      lastName: '',
+      name: '',
       email: '',
       phone: '',
       password: '',
       categoryId: [],
     });
     setError(null);
-    setFirstNameError('');
-    setLastNameError('');
+    setNameError('');
     setEmailError('');
     setPasswordError('');
     setPhoneError('');
@@ -292,7 +274,7 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
               {isEdit ? 'Edit Agent' : 'Create New Agent'}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isEdit ? `Update information for ${formData.firstName} ${formData.lastName}` : 'Add a new agent to the support team. They will receive credentials via email.'}
+              {isEdit ? `Update information for ${formData.name}` : 'Add a new agent to the support team. They will receive credentials via email.'}
             </p>
           </div>
 
@@ -305,57 +287,30 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* First Name and Last Name */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  First Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.firstName}
-                  onChange={(e) => {
-                    setFormData({ ...formData, firstName: e.target.value });
-                    if (e.target.value.trim()) {
-                      setFirstNameError('');
-                    }
-                  }}
-                  onBlur={(e) => validateFirstName(e.target.value)}
-                  className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white transition-all ${firstNameError
-                    ? 'border-red-500 dark:border-red-500'
-                    : 'border-gray-300 dark:border-gray-600'
-                    }`}
-                  placeholder="Enter first name"
-                />
-                {firstNameError && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{firstNameError}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Last Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.lastName}
-                  onChange={(e) => {
-                    setFormData({ ...formData, lastName: e.target.value });
-                    if (e.target.value.trim()) {
-                      setLastNameError('');
-                    }
-                  }}
-                  onBlur={(e) => validateLastName(e.target.value)}
-                  className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white transition-all ${lastNameError
-                    ? 'border-red-500 dark:border-red-500'
-                    : 'border-gray-300 dark:border-gray-600'
-                    }`}
-                  placeholder="Enter last name"
-                />
-                {lastNameError && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{lastNameError}</p>
-                )}
-              </div>
+            {/* Full Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Full Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  if (e.target.value.trim()) {
+                    setNameError('');
+                  }
+                }}
+                onBlur={(e) => validateName(e.target.value)}
+                className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white transition-all ${nameError
+                  ? 'border-red-500 dark:border-red-500'
+                  : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                placeholder="Enter full name"
+              />
+              {nameError && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{nameError}</p>
+              )}
             </div>
 
             {/* Email */}
