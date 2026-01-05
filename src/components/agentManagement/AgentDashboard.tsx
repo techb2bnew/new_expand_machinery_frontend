@@ -575,8 +575,7 @@ export default function AgentManagement() {
                 }}
                 onSubmit={handleEditAgent}
                 initialData={editingAgent ? {
-                    firstName: editingAgent.firstName,
-                    lastName: editingAgent.lastName,
+                    name: editingAgent.name,
                     email: editingAgent.email,
                     phone: editingAgent.phone === 'N/A' ? '' : (editingAgent.phone || ''),
                     status: editingAgent.status || 'offline',
