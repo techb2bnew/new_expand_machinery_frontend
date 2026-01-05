@@ -50,10 +50,10 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        // For phone number, only allow digits and limit to 15 digits
+        // For phone number, only allow digits and limit to 10 digits
         if (name === 'phoneNumber') {
-            const digitsOnly = value.replace(/\D/g, '');
-            if (digitsOnly.length <= 15) {
+            const digitsOnly = value.replace(/^\+1/, '').replace(/\D/g, '');
+            if (digitsOnly.length <= 10) {
                 setFormData(prev => ({
                     ...prev,
                     [name]: digitsOnly
@@ -87,9 +87,9 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
         if (!formData.phoneNumber.trim()) {
             newErrors.phoneNumber = 'Phone number is required';
         } else {
-            const phoneDigits = formData.phoneNumber.replace(/\D/g, '');
-            if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-                newErrors.phoneNumber = 'Phone number must be between 10 and 15 digits';
+            const phoneDigits = formData.phoneNumber.replace(/^\+1/, '').replace(/\D/g, '');
+            if (phoneDigits.length !== 10) {
+                newErrors.phoneNumber = 'Phone number must be exactly 10 digits';
             }
         }
 
@@ -108,8 +108,15 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
 
     const handleSubmit = () => {
         if (validateForm()) {
+            // Add +1 prefix before submitting
+            const submitData = {
+                ...formData,
+                phoneNumber: formData.phoneNumber.startsWith('+1') 
+                    ? formData.phoneNumber 
+                    : `+1${formData.phoneNumber.replace(/^\+1/, '')}`
+            };
             // Do not clear form here; parent will close modal on success
-            onSubmit(formData);
+            onSubmit(submitData);
         }
     };
 
@@ -164,15 +171,20 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Phone Number <span className="text-red-500">*</span>
                         </label>
-                        <input
-                            type="tel"
-                            name="phoneNumber"
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 ${errors.phoneNumber ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                            placeholder="Enter 10-15 digit phone number"
-                            maxLength={15}
-                        />
+                        <div className="relative">
+                            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">
+                                +1
+                            </span>
+                            <input
+                                type="tel"
+                                name="phoneNumber"
+                                value={formData.phoneNumber.replace(/^\+1/, '')}
+                                onChange={handleChange}
+                                className={`w-full pl-12 pr-4 py-2.5 border rounded-xl focus:outline-none dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 ${errors.phoneNumber ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                                placeholder="Enter 10 digit phone number"
+                                maxLength={10}
+                            />
+                        </div>
                         {errors.phoneNumber && (
                             <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.phoneNumber}</p>
                         )}

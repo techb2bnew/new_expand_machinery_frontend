@@ -482,7 +482,7 @@ export default function CustomerDashboard() {
           initialData={editingCustomer ? {
             name: editingCustomer.name,
             email: editingCustomer.email,
-            phoneNumber: editingCustomer.phone,
+            phoneNumber: editingCustomer.phone?.replace(/^\+1/, '') || '',
           } : undefined}
         />
 

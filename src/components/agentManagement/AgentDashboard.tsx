@@ -577,7 +577,7 @@ export default function AgentManagement() {
                 initialData={editingAgent ? {
                     name: editingAgent.name,
                     email: editingAgent.email,
-                    phone: editingAgent.phone === 'N/A' ? '' : (editingAgent.phone || ''),
+                    phone: editingAgent.phone === 'N/A' ? '' : (editingAgent.phone?.replace(/^\+1/, '') || ''),
                     status: editingAgent.status || 'offline',
                     categoryId: editingAgent.categoryIds || []
                 } : undefined}

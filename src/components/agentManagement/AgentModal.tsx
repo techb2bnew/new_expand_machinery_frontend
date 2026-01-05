@@ -164,15 +164,16 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
     return true;
   };
 
-  // Phone validation (10-15 digits)
+  // Phone validation (10 digits with +1 prefix)
   const validatePhone = (phone: string) => {
     if (!phone.trim()) {
       setPhoneError('Phone number is required');
       return false;
     }
-    const phoneDigits = phone.replace(/\D/g, ''); // Remove non-digits
-    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-      setPhoneError('Phone number must be between 10 and 15 digits');
+    // Remove +1 prefix and non-digits for validation
+    const phoneDigits = phone.replace(/^\+1/, '').replace(/\D/g, '');
+    if (phoneDigits.length !== 10) {
+      setPhoneError('Phone number must be exactly 10 digits');
       return false;
     }
     setPhoneError('');
@@ -208,7 +209,12 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
     setError(null);
 
     try {
-      await onSubmit(formData);
+      // Add +1 prefix before submitting
+      const submitData = {
+        ...formData,
+        phone: formData.phone.startsWith('+1') ? formData.phone : `+1${formData.phone.replace(/^\+1/, '')}`
+      };
+      await onSubmit(submitData);
       // Reset form
       setFormData({
         name: '',
@@ -371,31 +377,36 @@ export default function AgentModal({ isOpen, onClose, onSubmit, initialData, isE
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Phone Number <span className="text-red-500">*</span>
               </label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => {
-                  // Only allow digits
-                  const value = e.target.value.replace(/\D/g, '');
-                  if (value.length <= 15) {
-                    setFormData({ ...formData, phone: value });
-                    setPhoneError('');
-                  }
-                }}
-                onBlur={(e) => validatePhone(e.target.value)}
-                className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white transition-all ${phoneError
-                  ? 'border-red-500 dark:border-red-500'
-                  : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                placeholder="Enter 10-15 digit phone number"
-                maxLength={15}
-              />
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">
+                  +1
+                </span>
+                <input
+                  type="tel"
+                  value={formData.phone.replace(/^\+1/, '')}
+                  onChange={(e) => {
+                    // Only allow digits, remove +1 if user types it
+                    const value = e.target.value.replace(/^\+1/, '').replace(/\D/g, '');
+                    if (value.length <= 10) {
+                      setFormData({ ...formData, phone: value });
+                      setPhoneError('');
+                    }
+                  }}
+                  onBlur={(e) => validatePhone(`+1${e.target.value}`)}
+                  className={`w-full pl-12 pr-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-900 dark:text-white transition-all ${phoneError
+                    ? 'border-red-500 dark:border-red-500'
+                    : 'border-gray-300 dark:border-gray-600'
+                    }`}
+                  placeholder="Enter 10 digit phone number"
+                  maxLength={10}
+                />
+              </div>
               {phoneError && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{phoneError}</p>
               )}
               {!phoneError && formData.phone && (
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  {formData.phone.length}/10-15 digits
+                  {formData.phone.replace(/^\+1/, '').length}/10 digits
                 </p>
               )}
             </div>
