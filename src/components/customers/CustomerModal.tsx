@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 
 type AddCustomerForm = {
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     phoneNumber: string;
     password: string;
@@ -22,8 +21,7 @@ type AddCustomerModalProps = {
 
 const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLabel, isEdit = false, externalErrors }: AddCustomerModalProps) => {
     const [formData, setFormData] = useState<AddCustomerForm>({
-        firstName: '',
-        lastName: '',
+        name: '',
         email: '',
         phoneNumber: '',
         password: ''
@@ -34,8 +32,7 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
     React.useEffect(() => {
         if (isOpen) {
             setFormData({
-                firstName: initialData?.firstName ?? '',
-                lastName: initialData?.lastName ?? '',
+                name: initialData?.name ?? '',
                 email: initialData?.email ?? '',
                 phoneNumber: initialData?.phoneNumber ?? '',
                 password: initialData?.password ?? '',
@@ -77,13 +74,9 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
     const validateForm = () => {
         const newErrors: Partial<Record<keyof AddCustomerForm, string>> = {};
 
-        if (!formData.firstName.trim()) {
-            newErrors.firstName = 'First name is required';
+        if (!formData.name.trim()) {
+            newErrors.name = 'Full name is required';
         }
-
-        // if (!formData.lastName.trim()) {
-        //     newErrors.lastName = 'Last name is required';
-        // }
 
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required';
@@ -122,8 +115,7 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
 
     const handleCancel = () => {
         setFormData({
-            firstName: '',
-            lastName: '',
+            name: '',
             email: '',
             phoneNumber: '',
             password: ''
@@ -151,40 +143,21 @@ const CustomerModal = ({ isOpen, onClose, onSubmit, initialData, title, submitLa
                 </div>
 
                 <div className="px-6 pb-6">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                First Name <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="firstName"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 ${errors.firstName ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                                placeholder="Enter first name"
-                            />
-                            {errors.firstName && (
-                                <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.firstName}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Last Name 
-                            </label>
-                            <input
-                                type="text"
-                                name="lastName"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 ${errors.lastName ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                                placeholder="Enter last name"
-                            />
-                            {errors.lastName && (
-                                <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.lastName}</p>
-                            )}
-                        </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Full Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 ${errors.name ? 'border-red-500 dark:border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                            placeholder="Enter full name"
+                        />
+                        {errors.name && (
+                            <p className="text-red-500 dark:text-red-400 text-xs mt-1">{errors.name}</p>
+                        )}
                     </div>
 
                     <div className="mt-4">

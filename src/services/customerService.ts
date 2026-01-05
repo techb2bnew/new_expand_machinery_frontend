@@ -33,8 +33,7 @@ export type ApiCustomer = {
 };
 
 export type CustomerFormData = {
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     phoneNumber: string;
     password: string;
@@ -105,7 +104,7 @@ class CustomerService {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify({
-                name: `${formData.firstName} ${formData.lastName}`.trim(),
+                name: formData.name.trim(),
                 email: formData.email,
                 phone: formData.phoneNumber,
                 password: formData.password,
@@ -131,7 +130,7 @@ class CustomerService {
             method: 'PUT',
             headers: getHeaders(),
             body: JSON.stringify({
-                name: `${formData.firstName} ${formData.lastName}`.trim(),
+                name: formData.name.trim(),
                 email: formData.email,
                 phone: formData.phoneNumber,
                 password: formData.password,

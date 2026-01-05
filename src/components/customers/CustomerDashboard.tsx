@@ -408,14 +408,14 @@ export default function CustomerDashboard() {
               />
             </div>
             <div className="flex gap-2 sm:gap-3 flex-wrap w-full lg:w-auto lg:flex-shrink-0">
-              {/* <button
+              <button
                 onClick={() => setIsModalOpen(true)}
                 className="cursor-pointer flex-1 lg:flex-none px-3 sm:px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl font-medium text-sm sm:text-base whitespace-nowrap"
               >
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">Add Customer</span>
                 <span className="sm:hidden">Add</span>
-              </button> */}
+              </button>
               <ExportButton
                 data={filteredCustomers}
                 selectedIds={selectedCustomers}
@@ -480,8 +480,7 @@ export default function CustomerDashboard() {
           submitLabel="Save Changes"
           isEdit={true}
           initialData={editingCustomer ? {
-            firstName: editingCustomer.name.split(' ')[0] ?? '',
-            lastName: editingCustomer.name.split(' ').slice(1).join(' ') ?? '',
+            name: editingCustomer.name,
             email: editingCustomer.email,
             phoneNumber: editingCustomer.phone,
           } : undefined}
